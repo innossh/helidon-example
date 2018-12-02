@@ -1,0 +1,36 @@
+// ref. https://github.com/oracle/helidon/blob/0.10.5/examples/helidon-quickstart-se/build.gradle
+
+ext {
+    artifactId = project.name
+}
+
+dependencies {
+    compile "io.helidon:helidon-bom:${helidonVersion}"
+    compile "io.helidon.webserver:helidon-webserver-bundle:${helidonVersion}"
+    compile "io.helidon.config:helidon-config-yaml:${helidonVersion}"
+    compile "io.helidon.microprofile.metrics:helidon-metrics-se:${helidonVersion}"
+}
+
+task copyLibs(type: Copy) {
+    from configurations.runtime
+    into "${buildDir}/libs/libs"
+}
+
+task copyDockerfile(type: Copy) {
+    from 'src/main/docker/Dockerfile'
+    into "${buildDir}/libs"
+    expand(project.properties)
+}
+
+copyDockerfile.dependsOn jar
+copyLibs.dependsOn jar
+assemble.dependsOn copyDockerfile
+assemble.dependsOn copyLibs
+
+jar {
+    manifest {
+        attributes ('Main-Class': 'innossh.helidon.example.metrics.Main',
+                'Class-Path': configurations.runtime.files.collect { "libs/$it.name" }.join(' ')
+        )
+    }
+}

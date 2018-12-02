@@ -1,0 +1,4 @@
+rootProject.name = 'helidon-example'
+include ":helidon-example-metrics"
+
+project(':helidon-example-metrics').projectDir = "$rootDir/metrics" as File

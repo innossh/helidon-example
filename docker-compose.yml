@@ -1,0 +1,14 @@
+version: '3'
+services:
+  helidon-example-metrics:
+    image: helidon-example-metrics
+    ports:
+      - "8080:8080"
+  prometheus:
+    image: "prom/prometheus:v2.5.0"
+    ports:
+      - "9090:9090"
+    volumes:
+      - "./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+    depends_on:
+      - helidon-example-metrics
